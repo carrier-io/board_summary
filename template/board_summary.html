@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tickets Summary</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .highlight {
+            font-weight: bold;
+            color: #2a9d8f;
+        }
+    </style>
+</head>
+<body>
+
+<p>The latest update on the engagement: <span class="highlight">{{ engagement.name }}</span>.</p>
+<p>Report generated on: <span class="highlight">{{ current_date }}</span></p>
+
+<h3>Summary</h3>
+<table>
+    <thead>
+    <tr>
+        <th>Status</th>
+        <th>Count</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>Open</td>
+        <td>{{ tickets_summary.open | length }}</td>
+    </tr>
+    <tr>
+        <td>In Progress</td>
+        <td>{{ tickets_summary.in_progress | length }}</td>
+    </tr>
+    <tr>
+        <td>In Review</td>
+        <td>{{ tickets_summary.in_review | length }}</td>
+    </tr>
+    <tr>
+        <td>Blocked</td>
+        <td>{{ tickets_summary.blocked | length }}</td>
+    </tr>
+    <tr>
+        <td>Done</td>
+        <td>{{ tickets_summary.done | length }}</td>
+    </tr>
+    <tr>
+        <td>Risks</td>
+        <td>{{ risks | length }}</td>
+    </tr>
+    </tbody>
+</table>
+
+<h3>Active Tickets</h3>
+<table>
+    <thead>
+    <tr>
+        <th>Title</th>
+        <th>Assignee</th>
+        <th>Status</th>
+        <th>Severity</th>
+        <th>Start Date</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for status, tickets_list in tickets_summary.items() %}
+    {% if status != 'done' %}
+    {% for ticket in tickets_list %}
+    <tr>
+        <td>{{ ticket.title }}</td>
+        <td>{{ ticket.assignee.name.lower() if ticket.assignee else 'n/a' }}</td>
+        <td>{{ status.upper() }}</td>
+        <td>{{ ticket.severity.upper() }}</td>
+        <td>{{ ticket.start_date }}</td>
+    </tr>
+    {% endfor %}
+    {% endif %}
+    {% endfor %}
+    </tbody>
+</table>
+
+<h3>Recently Completed Tickets (Last 5 Days)</h3>
+<table>
+    <thead>
+    <tr>
+        <th>Title</th>
+        <th>Assignee</th>
+        <th>Completion Date</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for ticket in recent_done_tickets %}
+    <tr>
+        <td>{{ ticket.title }}</td>
+        <td>{{ ticket.assignee.name.lower() if ticket.assignee else 'n/a' }}</td>
+        <td>{{ ticket.completion_date }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+<p>For more details, please refer to the <a href="https://platform.getcarrier.io/">Carrier Platform</a>.</p>
+
+<p>Best regards,</p>
+<p>PTaaS Team</p>
+</body>
+</html>
